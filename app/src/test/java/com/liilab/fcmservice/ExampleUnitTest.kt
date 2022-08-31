@@ -1,4 +1,4 @@
-package com.example.fcmservice
+package com.liilab.fcmservice
 
 import org.junit.Test
 
