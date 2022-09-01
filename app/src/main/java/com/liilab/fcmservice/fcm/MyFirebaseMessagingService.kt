@@ -25,7 +25,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.liilab.fcmservice.MainActivity
+import com.liilab.fcmservice.screen.main.MainActivity
 import com.liilab.fcmservice.R
 import java.io.IOException
 
@@ -40,25 +40,29 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(p0: RemoteMessage) {
         try {
-            if (p0.notification != null) showNotification(
-                p0.notification?.title,
-                p0.notification?.body,
-                p0
-            )
-            else showNotification(
-                p0.data[NotificationConstants.MESSAGE_TITLE],
-                p0.data[NotificationConstants.MESSAGE_BODY],
-                p0
-            )
+            showNotification(remoteMessage = p0)
         } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
-    private fun showNotification(title: String?, body: String?, p0: RemoteMessage) {
-        val imageUrl = p0.data[NotificationConstants.IMAGE_URL]
+    private fun showNotification(remoteMessage: RemoteMessage) {
+        val title = remoteMessage.notification?.title
+        val body = remoteMessage.notification?.body
+        val imageUrl = remoteMessage.data[NotificationConstants.IMAGE_URL]
 
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val intent: Intent
+        when(remoteMessage.notification?.clickAction)
+        {
+            NotificationConstants.MAIN_SCREEN_CLICK_ACTION -> {
+                intent = Intent(applicationContext, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            else -> {
+                intent = Intent(applicationContext, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+        }
 
         if (TextUtils.isEmpty(imageUrl) || imageUrl == null) {
             if (title != null && body != null) showNotificationMessage(
@@ -85,7 +89,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         intent: Intent,
         imageUrl: String
     ) {
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
         showNotificationMessage(
             title = title,
             message = message,

@@ -11,6 +11,8 @@ class NotificationConstants {
         const val NOTIFICATION_ID = 0
         const val MESSAGE_TITLE = "title"
         const val MESSAGE_BODY = "body"
-        const val IMAGE_URL = "image_url"
+        const val IMAGE_URL = "imageUrl"
+
+        const val MAIN_SCREEN_CLICK_ACTION = "com.liilab.fcmservice.screen.main.MainActivity"
     }
 }
